@@ -632,7 +632,8 @@ if __name__ == "__main__":
             ).to_netcdf(snakemake.output.profile)
         else:
             # otherwise perform the calculations
-            inflow = correction_factor * func(capacity_factor=True, **resource)
+            # inflow = correction_factor * func(capacity_factor=True, **resource)
+            inflow = correction_factor * func(aggregate_time=None, **resource)
 
             if "clip_min_inflow" in config:
                 inflow = inflow.where(inflow >= config["clip_min_inflow"], 0)

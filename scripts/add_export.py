@@ -84,9 +84,9 @@ def add_export(n, hydrogen_buses_ports, export_profile):
 
     # add export links
     logger.info("Adding export links")
-    n.madd(
+    n.add(
         "Link",
-        names=hydrogen_buses_ports.index + " export",
+        name=hydrogen_buses_ports.index + " export",
         bus0=hydrogen_buses_ports.index,
         bus1="H2 export bus",
         p_nom_extendable=True,

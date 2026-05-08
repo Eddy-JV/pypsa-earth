@@ -11,7 +11,7 @@ sys.path.append("./scripts")
 
 from shutil import copyfile, move
 
-from snakemake.remote.HTTP import RemoteProvider as HTTPRemoteProvider
+# from snakemake.remote.HTTP import RemoteProvider as HTTPRemoteProvider
 
 from _helpers import (
     create_country_list,
@@ -30,7 +30,7 @@ from retrieve_databundle_light import (
 from pathlib import Path
 
 
-HTTP = HTTPRemoteProvider()
+# HTTP = HTTPRemoteProvider()
 
 copy_default_files()
 
@@ -78,6 +78,7 @@ wildcard_constraints:
     demand=r"[-+a-zA-Z0-9\.\s]*",
     h2export=r"[0-9]+(\.[0-9]+)?",
     planning_horizons="20[2-9][0-9]|2100",
+    year = r"\d{4}",
 
 
 if config["custom_rules"] is not []:
@@ -500,12 +501,7 @@ if config["enable"].get("retrieve_cost_data", True):
     rule retrieve_cost_data:
         params:
             version=config["costs"]["technology_data_version"],
-        input:
-            HTTP.remote(
-                f"raw.githubusercontent.com/PyPSA/technology-data/{config['costs']['technology_data_version']}/outputs/{cost_directory}"
-                + "costs_{year}.csv",
-                keep_local=True,
-            ),
+            cost_directory=cost_directory,
         output:
             "resources/" + RDIR + "costs_{year}.csv",
         log:
@@ -513,7 +509,22 @@ if config["enable"].get("retrieve_cost_data", True):
         resources:
             mem_mb=5000,
         run:
-            move(input[0], output[0])
+            import urllib.request
+            import pathlib
+
+            url = (
+                "https://raw.githubusercontent.com/PyPSA/technology-data/"
+                f"{params.version}/outputs/{params.cost_directory}"
+                f"costs_{wildcards.year}.csv"
+            )
+
+            # ensure target directory exists
+            pathlib.Path(os.path.dirname(output[0])).mkdir(
+                parents=True, exist_ok=True
+            )
+
+            with urllib.request.urlopen(url) as r, open(output[0], "wb") as f:
+                f.write(r.read())
 
 
 rule process_cost_data:

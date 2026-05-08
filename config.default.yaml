@@ -717,11 +717,13 @@ sector:
       Co2L0.00: 0.88
 
   # ------------------- BIOMASS SECTOR -------------------
-
-  biomass_transport: true # biomass transport between nodes
-  biomass_transport_default_cost: 0.1 #EUR/km/MWh
-  solid_biomass_potential: 40 # TWh/a, Potential of whole modelled area
-  biogas_potential: 0.5 # TWh/a, Potential of whole modelled area
+  biomass:
+    biomass_transport: true # biomass transport between nodes
+    biomass_transport_default_cost: 0.1 #EUR/km/MWh
+    user_defined_potentials:
+      solid_biomass_potential: 40 # TWh/a, Potential of whole modelled area
+      biogas_potential: 0.5 # TWh/a, Potential of whole modelled area
+    biomass_potential_scenario: "TSS" # "BAU", "TSS" . BAU (Business as Ususal or Towards Sustainability Scenario)biomass potential based on https://zenodo.org/records/15273606
 
   # ------------------- ELECTRICITY DISTRIBUTION GRID -------------------
 
